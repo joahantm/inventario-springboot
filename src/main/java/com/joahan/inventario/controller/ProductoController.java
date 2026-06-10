@@ -1,28 +1,43 @@
 package com.joahan.inventario.controller;
 
 import com.joahan.inventario.model.Producto;
-import com.joahan.inventario.repository.ProductoRepository;
+import com.joahan.inventario.service.ProductoService;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/productos")
 public class ProductoController {
 
-    private final ProductoRepository repository;
+    private final ProductoService service;
 
-    public ProductoController(ProductoRepository repository) {
-        this.repository = repository;
+    public ProductoController(ProductoService service) {
+        this.service = service;
     }
 
     @GetMapping
     public List<Producto> listar() {
-        return repository.findAll();
+        return service.listar();
     }
 
     @PostMapping
-    public Producto guardar(@RequestBody Producto producto) {
-        return repository.save(producto);
+    public Producto guardar(@Valid @RequestBody Producto producto) {
+        return service.guardar(producto);
     }
+
+    @DeleteMapping("/{id}")
+    public void eliminar(@PathVariable Long id) {
+        service.eliminar(id);
+    }
+
+    @PutMapping("/{id}")
+    public Producto actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Producto productoActualizado) {
+
+        return service.actualizar(id, productoActualizado);
+    }
+
+
 }
